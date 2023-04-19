@@ -32,12 +32,12 @@ smallvec = "1.8.1"
 
 [patch.crates-io]
 # Uncomment to use local checkout of cranelift
-#cranelift-codegen = { path = "../wasmtime/cranelift/codegen" }
-#cranelift-frontend = { path = "../wasmtime/cranelift/frontend" }
-#cranelift-module = { path = "../wasmtime/cranelift/module" }
-#cranelift-native = { path = "../wasmtime/cranelift/native" }
-#cranelift-jit = { path = "../wasmtime/cranelift/jit" }
-#cranelift-object = { path = "../wasmtime/cranelift/object" }
+cranelift-codegen = { path = "../wasmtime/cranelift/codegen" }
+cranelift-frontend = { path = "../wasmtime/cranelift/frontend" }
+cranelift-module = { path = "../wasmtime/cranelift/module" }
+cranelift-native = { path = "../wasmtime/cranelift/native" }
+cranelift-jit = { path = "../wasmtime/cranelift/jit" }
+cranelift-object = { path = "../wasmtime/cranelift/object" }
 
 #gimli = { path = "../" }
 
