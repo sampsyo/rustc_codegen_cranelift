@@ -52,6 +52,11 @@ impl TestCase {
     }
 }
 
+const ALDS_SUITE: &[TestCase] = &[
+    TestCase::build_lib("build.mini_core", "example/mini_core.rs", "lib"),
+    TestCase::build_lib("build.example", "example/example.rs", "lib"),
+];
+
 const NO_SYSROOT_SUITE: &[TestCase] = &[
     TestCase::build_lib("build.mini_core", "example/mini_core.rs", "lib,dylib"),
     TestCase::build_lib("build.example", "example/example.rs", "lib"),
@@ -239,6 +244,21 @@ pub(crate) fn run_tests(
     bootstrap_host_compiler: &Compiler,
     target_triple: String,
 ) {
+    // ALDS: Custom test setup!!
+    let target_compiler = build_sysroot::build_sysroot(
+        dirs,
+        channel,
+        SysrootKind::None,
+        cg_clif_dylib,
+        bootstrap_host_compiler,
+        target_triple.clone(),
+    );
+    let runner =
+        TestRunner::new(dirs.clone(), target_compiler, get_host_triple() == target_triple);
+    BUILD_EXAMPLE_OUT_DIR.ensure_fresh(dirs);
+    runner.run_testsuite(ALDS_SUITE);
+    return;
+
     if config::get_bool("testsuite.no_sysroot") {
         let target_compiler = build_sysroot::build_sysroot(
             dirs,
