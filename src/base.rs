@@ -365,10 +365,11 @@ fn codegen_fn_body(fx: &mut FunctionCx<'_, '_, '_>, start_block: Block) {
                 fx.bcx.set_cold_block(failure);
 
                 if *expected {
-                    fx.bcx.ins().brif(cond, target, &[], failure, &[]);
+                    fx.bcx.ins().brz(cond, failure, &[]);
                 } else {
-                    fx.bcx.ins().brif(cond, failure, &[], target, &[]);
+                    fx.bcx.ins().brz(cond, failure, &[]);
                 };
+                fx.bcx.ins().jump(target, &[]);
 
                 fx.bcx.switch_to_block(failure);
                 fx.bcx.ins().nop();
@@ -424,9 +425,11 @@ fn codegen_fn_body(fx: &mut FunctionCx<'_, '_, '_>, start_block: Block) {
                         }
                     } else {
                         if test_zero {
-                            fx.bcx.ins().brif(discr, else_block, &[], then_block, &[]);
+                            fx.bcx.ins().brz(discr, then_block, &[]);
+                            fx.bcx.ins().jump(else_block, &[]);
                         } else {
-                            fx.bcx.ins().brif(discr, then_block, &[], else_block, &[]);
+                            fx.bcx.ins().brnz(discr, then_block, &[]);
+                            fx.bcx.ins().jump(else_block, &[]);
                         }
                     }
                 } else {
@@ -748,7 +751,8 @@ fn codegen_stmt<'tcx>(
 
                         fx.bcx.switch_to_block(loop_block);
                         let done = fx.bcx.ins().icmp_imm(IntCC::Equal, index, times as i64);
-                        fx.bcx.ins().brif(done, done_block, &[], loop_block2, &[]);
+                        fx.bcx.ins().brnz(done, done_block, &[]);
+                        fx.bcx.ins().jump(loop_block2, &[]);
 
                         fx.bcx.switch_to_block(loop_block2);
                         let to = lval.place_index(fx, index);
